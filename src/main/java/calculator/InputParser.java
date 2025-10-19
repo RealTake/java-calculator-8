@@ -1,5 +1,7 @@
 package calculator;
 
+import calculator.validator.NumberValidator;
+import calculator.validator.PositiveNumberValidator;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +20,17 @@ public class InputParser {
     private static final String DEFAULT_DELIMITERS_CACHE = Arrays.stream(DEFAULT_DELIMITERS)
             .map(Pattern::quote)
             .collect(Collectors.joining("|"));
+
+
+    private final NumberValidator VALIDATOR;
+
+    public InputParser() {
+        this(new PositiveNumberValidator());
+    }
+
+    public InputParser(NumberValidator validator) {
+        this.VALIDATOR = validator;
+    }
 
     public List<BigDecimal> parse(String input) {
         if (input == null || input.isBlank()) {
@@ -43,7 +56,13 @@ public class InputParser {
         return Arrays.stream(numbersStr.split(delimiter))
                 .filter(s -> !s.isBlank())
                 .map(BigDecimal::new)
+                .map(this::validate)
                 .toList();
+    }
+
+    private BigDecimal validate(BigDecimal number) {
+        VALIDATOR.isValid(number);
+        return number;
     }
 
     private boolean hasCustomDelimiter(String numbersStr) {

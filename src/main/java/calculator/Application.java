@@ -22,5 +22,8 @@ public class Application {
 
         final InputParser parser = new InputParser();
         final List<BigDecimal> parseNumbers = parser.parse(input);
+
+        final BigDecimal result = Calculator.sumAll(parseNumbers);
+        System.out.println("결과 : " + result);
     }
 }
